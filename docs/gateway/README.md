@@ -13,6 +13,7 @@
     * [JS](#services-js)
     * [Flogo Activity](#services-flogo-activity)
     * [Flogo Flow](#services-flogo-flow)
+    * [Rate Limiter](#services-rate-limiter)
   * [Responses](#responses)
   * [Policies Proposal](#policies)
     * [Simple Policy](#simple-policy)
@@ -426,6 +427,67 @@ Utilizing the response values can be seen in a response handler:
   }
 }
 ```
+
+#### <a name="services-rate-limiter"></a>Rate Limiter
+
+The `ratelimiter` service type creates a rate limiter with specified `limit`, same can be used to limit the number of `token` consumptions accross `dispatches`.
+
+The service `settings` and available `input` for the request are as follows:
+
+| Name   |  Type   | Description   |
+|:-----------|:--------|:--------------|
+| limit | string | Limit can be specifed in the format of "limit-period". Valid periods are 'S', 'M' & 'H' to represent Second, Minute & Hour. Example: "10-S" represents 10 request/second |
+| token | string | Token for which rate limit has to be applied |
+
+The available response outputs are as follows:
+
+| Name   |  Type   | Description   |
+|:-----------|:--------|:--------------|
+| quotaExceeded | boolean | if the limit exceeds |
+| availableQuota | integer | available limit |
+
+A sample `service` definition is:
+
+```json
+{
+    "name": "RateLimiter",
+    "description": "Rate limiter",
+    "type": "ratelimiter",
+    "settings": {
+        "limit": "5-M"
+    }
+}
+```
+
+An example `step` that invokes the above `ratelimiter` service to consume a `token` is:
+```json
+{
+    "service": "RateLimiter",
+    "input": {
+        "token": "${payload.header.Token}"
+    }
+}
+```
+Utilizing and extracting the response values can be seen in both a conditional evaluation:
+```json
+{"if": "RateLimiter.quotaExceeded == true"}
+```
+and a response handler:
+```json
+{
+    "if": "RateLimiter.quotaExceeded == true",
+    "error": true,
+    "output": {
+        "code": 403,
+        "data": {
+            "status":"Rate Limit Exceeded - The service you have requested is over-capacity."
+        }
+    }
+}
+```
+##### TODO
+* Multiple rate limiters support
+* Apply rate limite accross multiple Mashling gateway instances
 
 ### <a name="responses"></a>Responses
 
