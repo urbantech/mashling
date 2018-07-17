@@ -430,7 +430,7 @@ Utilizing the response values can be seen in a response handler:
 
 #### <a name="services-rate-limiter"></a>Rate Limiter
 
-The `ratelimiter` service type creates a rate limiter with specified `limit`, same can be used to limit the number of `token` consumptions accross `dispatches`.
+The `ratelimiter` service type creates a rate limiter with specified `limit`, same can be used to limit the number of `token` consumptions.
 
 The service `settings` and available `input` for the request are as follows:
 
@@ -443,7 +443,7 @@ The available response outputs are as follows:
 
 | Name   |  Type   | Description   |
 |:-----------|:--------|:--------------|
-| quotaExceeded | boolean | if the limit exceeds |
+| quotaExceeded | bool | if the limit exceeds |
 | availableQuota | integer | available limit |
 
 A sample `service` definition is:
